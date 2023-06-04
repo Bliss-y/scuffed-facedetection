@@ -6,7 +6,7 @@
 
 # Specifying the folder where images are present
 TrainingImagePath='./images/train'
-TestingImagePath='./images/train'
+TestingImagePath='./images/test'
 
 from keras.preprocessing.image import ImageDataGenerator
 # Understand more about ImageDataGenerator at below link
@@ -72,7 +72,7 @@ print('\n The Number of output neurons: ', OutputNeurons)
 
 
 
-
+ResultMap
 
 
 '''######################## Create CNN deep learning model ########################'''
@@ -117,7 +117,7 @@ import time
 StartTime=time.time()
  
 # Starting the model training
-classifier.fit_generator(
+classifier.fit(
 					training_set,
 					steps_per_epoch=5,
 					epochs=300,
@@ -159,7 +159,7 @@ print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 predict('./images/wild/0.png')
 import os
 
-testfolder = './images/test/others/'
+testfolder = './images/test/'
 total =0
 mistake = 0
 for file in os.listdir(testfolder):

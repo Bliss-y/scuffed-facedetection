@@ -3,28 +3,36 @@ from model import model
 m = model()
 model()
 
-m = model.createDataSet('./images/train', './images/test')
+m = model.createDataSet('./images/train', './images/train')
 m.load()
+m.train(1000)
+m.train(50)
+
+
+m.saveModel('./oopmodel/', 'model')
 
 m.train()
 m.predict('./images/wild/1face10.jpg')
 
-m.predict('./')
+m.predict('./test/frame.jpg')
 
 import os
 
-testfolder = './test/'
+testfolder = './images/test/panas_nudes/'
+
 total =0
+correct = 'panas_nudes'
 mistake = 0
 for file in os.listdir(testfolder):
 	total +=1
 	res = m.predict(testfolder+file)
-	print(testfolder + file)
-	print(res)
 
-	print('-'*3)
-
-print((total -mistake)*100/total)
+	if res != correct:
+		print(testfolder + file)
+		print(res)
+		print('-'*3)
+		mistake+=1
+print(f'accuracy {(total -mistake)*100/total}')
 
 
 
@@ -58,15 +66,18 @@ def cap():
 			cv2.imwrite(name, frame[y:y+h, x:x+w])
 			cv2.rectangle(frame, (x, y), (x + w, y + h), color, stroke)
 			result = m.predict('./temp/tmp.jpg')
-			cv2.putText(frame, result, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 1, thickness=1, color=0)
-			if(result !='frames'):
-				mistakes +=1
-				cv2.imwrite('C:\\general\\ai2\\images\\train\\frames\\frame_%d.jpg'%frame_num, frame[y:y+h, x:x+w])
+			cv2.putText(frame, result, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 1, thickness=2, color=0)
 			print(result)
+			print()
+			if(result != 'Nishedh'):
+				mistakes +=1
+				# cv2.imwrite('C:\\general\\ai2\\Nishedh\\nishedh_new_%d.jpg'%frame_num, frame[y:y+h, x:x+w])
+
 			frame_num+=1
 		cv2.imshow('image', frame)
-		key = cv2.waitKey(500) & 0xFF
+		key = cv2.waitKey(1) & 0xFF
 		if key == ord('q'): break
+		
 
 	stream.release()
 	cv2.waitKey(1)
@@ -75,3 +86,7 @@ def cap():
 	print(f'{mistakes=}, {frame_num=}, accuracy={(frame_num -mistakes)/frame_num}')
 
 cap()
+
+
+
+
