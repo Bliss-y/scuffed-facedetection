@@ -1,32 +1,48 @@
 from model import model
 
 m = model()
-model()
+
+
 
 m = model.createDataSet('./images/train', './images/train')
-m.load()
+m = model.load('./oopmodel/', 'model2')
 m.train(1000)
 m.train(50)
 
-
-m.saveModel('./oopmodel/', 'model')
+m.saveModel('./oopmodel/', 'model2')
 
 m.train()
 m.predict('./images/wild/1face10.jpg')
 
 m.predict('./test/frame.jpg')
 
+
+
+
+####################################################
+import json
+dir  ='./oopmodel/'; name = 'model2';
+f = open(dir+name+'/model.json', 'r')
+ResultMap = json.load(f)
+ResultMap['3']
+c = {}
+it = 0
+for i in ResultMap:
+	c[it] = ResultMap[str(it)];
+	it+=1
+c
+f.close()
+####################################################
+
 import os
 
-testfolder = './images/test/panas_nudes/'
-
+testfolder = './images/wild/'
 total =0
 correct = 'panas_nudes'
 mistake = 0
 for file in os.listdir(testfolder):
 	total +=1
 	res = m.predict(testfolder+file)
-
 	if res != correct:
 		print(testfolder + file)
 		print(res)
@@ -80,7 +96,7 @@ def cap():
 		
 
 	stream.release()
-	cv2.waitKey(1)
+	cv2.waitKey(100)
 	cv2.destroyAllWindows()
 	cv2.waitKey(1)
 	print(f'{mistakes=}, {frame_num=}, accuracy={(frame_num -mistakes)/frame_num}')

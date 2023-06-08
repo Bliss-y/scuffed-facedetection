@@ -4,7 +4,7 @@ from keras.layers import Convolution2D, MaxPool2D, Flatten, Dense, Dropout
 import numpy as np
 from keras.preprocessing import image
 from keras.utils import img_to_array, load_img
-from os import path as p, mkdir
+from os import path as p, mkdir, listdir
 import time
 from keras.preprocessing.image import ImageDataGenerator
 import json
@@ -28,18 +28,31 @@ class model:
         self.arch.add(Dense(OutputNeurons, activation='softmax'))
         self.arch.compile(loss='categorical_crossentropy', optimizer = 'adam', metrics=["accuracy"])
 
-    def load(self, dir, name):
-        self.arch.load_weights() 
-        with open(p.join(dir, name + '.h5')) as f:
-            self.ResultMap = json.load(f)
+    def load(dir, name):
+        f = open(dir+name+'/model.json', 'r')
+        ResultMap = json.load(f)
+        c = {}
+        it = 0
+        for i in ResultMap:
+            c[it] = ResultMap[str(it)];
+            it+=1
+        f.close()
+        ResultMap = c
+        OutputNeurons = len(ResultMap)
+        m = model(OutputNeurons=OutputNeurons)
+        m.ResultMap = ResultMap
+        m.OutputNeurons = OutputNeurons
+        m.arch.load_weights(dir+name + '/model.h5')
+        return m
         
 
     def saveModel(self, dir, name):
-        if not p.exists(p.join(dir, '/model')):
-            mkdir(p.join(dir, '/model/'))
-        self.arch.save_weights(p.join(dir, './model/'+name + '.h5')) 
-        with open(p.join(dir, 'model/'+name+'.json'), 'w') as f:
-            json.write(f, self.ResultMap)
+        if not p.exists(dir + name):
+            mkdir(dir + name)
+        f = open(dir + name + '/model.json', 'w')
+        self.arch.save_weights(p.join( dir+name + '/model.h5'))
+        json.dump(self.ResultMap, f)
+        f.close()
         self.OutputNeurons = len(self.ResultMap)
 
     def predict(self, impath):
@@ -49,9 +62,16 @@ class model:
         test_image=img_to_array(test_image)
         test_image=np.expand_dims(test_image,axis=0)
         result=self.arch.predict(test_image,verbose=0)
-        print('####'*10)
-        print('Prediction is: ',self.ResultMap[np.argmax(result)])
         return self.ResultMap[np.argmax(result)]
+    
+    def predictFolder(self, testfolder):
+        total =0
+        for file in listdir(testfolder):
+            total +=1
+            res = self.predict(testfolder+file)
+            print(testfolder + file)
+            print(res)
+            print('-'*3)
 
     def train(self, epochs=500):
         StartTime=time.time()
@@ -104,3 +124,4 @@ class model:
         return m
 
 model.createDataSet = staticmethod(model.createDataSet)
+model.load = staticmethod(model.load)
