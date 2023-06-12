@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import *
 from face_detection import faceDetection
-from model import model
 from PIL import Image, ImageTk
+from model import model
 m = model.load('./oopmodel/', 'model2');
 
 

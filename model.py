@@ -85,7 +85,6 @@ class model:
         
         EndTime=time.time()
         print("###### Total Time Taken: ", round((EndTime-StartTime)/60), 'Minutes ######')
-        self.arch.save_weights('./model/face_detect.h5')
 
 
     def createDataSet(TrainingImagePath, TestingImagePath):
